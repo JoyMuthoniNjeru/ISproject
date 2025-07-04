@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Driving Test</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="logo-section">
+        <img src="{% static 'img/ntsa-logo.png' %}" class="logo-img" alt="Logo">
+    </div>
+
+    <div class="page-wrapper">
+        <div class="login-container">
+            <h1>Driving Test Booking</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Next</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
