@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Payment</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+<div class="logo-section">
+    <img src="{% static 'img/ntsa-logo.png' %}" class="logo-img" alt="Logo">
+</div>
+
+<div class="page-wrapper">
+    <div class="login-container">
+        <h1>Hello {{ booking.full_name }}</h1>
+        <p>Please complete your payment of <strong>KES 1050</strong> to confirm your test booking.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Confirm Payment</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

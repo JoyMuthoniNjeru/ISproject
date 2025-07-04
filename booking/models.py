@@ -48,3 +48,19 @@ class Booking(models.Model):
     def __str__(self):
         return f"{self.full_name} – {self.test_slot}"
 
+class Payment(models.Model):
+    PAYMENT_METHODS = [
+        ('mpesa', 'M-Pesa'),
+        ('airtel', 'Airtel Money'),
+        ('visa', 'Visa'),
+    ]
+
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    phone_number = models.CharField(max_length=20)
+    pin = models.CharField(max_length=10)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.booking.full_name} – {self.payment_method} – {self.amount}"
