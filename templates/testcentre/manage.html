@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Test Centres</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="logo-section">
+        <img src="{% static 'img/ntsa-logo.png' %}" alt="NTSA Logo" class="logo-img">
+    </div>
+
+    <div class="page-wrapper">
+        <div class="login-container">
+            <h1>Your Test Centres</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                <label for="id_name">Test Centre Name</label>
+                {{ form.name }}
+
+                <label for="id_location">Location</label>
+                {{ form.location }}
+
+                <button type="submit">Add Test Centre</button>
+            </form>
+
+            <hr>
+            <ul>
+                {% for centre in centres %}
+                    <li>
+                        <strong>{{ centre.name }}</strong> – {{ centre.location }}
+                        <a href="{% url 'edit_test_centre' centre.pk %}">[Edit]</a>
+                        <a href="{% url 'delete_test_centre' centre.pk %}">[Delete]</a>
+                    </li>
+                {% empty %}
+                    <p>You haven't added any test centres yet.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
