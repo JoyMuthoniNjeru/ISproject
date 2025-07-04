@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Slot</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="logo-section">
+        <img src="{% static 'img/ntsa-logo.png' %}" alt="NTSA Logo" class="logo-img">
+    </div>
+
+    <div class="page-wrapper">
+        <div class="login-container">
+            <h1>Edit Slot</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Save Changes</button>
+            </form>
+
+            <p><a href="{% url 'admin_dashboard' %}">← Back to Dashboard</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Slot Configuration</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="logo-section">
+        <img src="{% static 'img/ntsa-logo.png' %}" alt="NTSA Logo" class="logo-img">
+    </div>
+
+    <div class="page-wrapper">
+        <div class="login-container">
+            <h1>Configure Test Slots</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Add Slot</button>
+            </form>
+
+            <hr>
+            <h2>All Configured Slots</h2>
+            <ul>
+                {% for slot in slots %}
+                    <li>
+                        {{ slot.test_centre.name }} – {{ slot.date }} ({{ slot.start_time }} to {{ slot.end_time }}) – Max: {{ slot.max_applicants }}
+                        <a href="{% url 'edit_slot' slot.pk %}">[Edit]</a>
+                        <a href="{% url 'delete_slot' slot.pk %}">[Delete]</a>
+                    </li>
+                {% empty %}
+                    <p>No slots configured yet.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
