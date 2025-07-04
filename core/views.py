@@ -19,7 +19,7 @@ def login_view(request):
                 else:
                     login(request, user)
                     if profile.user_type == 'admin':
-                        return redirect('/adminpanel/dashboard/')
+                        return redirect('/adminpanel/confirmed-bookings/')
                     elif profile.user_type == 'manager':
                         return redirect('/testcentre/manage/')
                     else:

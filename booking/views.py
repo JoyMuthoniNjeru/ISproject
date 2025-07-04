@@ -3,6 +3,7 @@ from .forms import BookingForm
 from .forms import PaymentForm
 from .models import Booking, Payment
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
 @login_required
 def make_booking(request):
@@ -44,6 +45,13 @@ def payment_page(request, booking_id):
         'booking': booking,
     })
 
-
 def payment_success(request):
     return render(request, 'booking/payment_success.html')
+
+def is_admin(user):
+    return user.userprofile.user_type == 'admin'
+
+@user_passes_test(is_admin)
+def confirmed_bookings_view(request):
+    bookings = Booking.objects.filter(confirmed=True).select_related('test_slot', 'test_slot__test_centre')
+    return render(request, 'adminpanel/confirmed_bookings.html', {'bookings': bookings})

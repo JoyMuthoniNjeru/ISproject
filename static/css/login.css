@@ -100,3 +100,19 @@ button:hover {
   font-size: 14px;
   margin-top: 10px;
 }
+
+.dashboard-button {
+  display: inline-block;
+  padding: 12px 20px;
+  margin: 10px 0;
+  background-color: #007A33;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-button:hover {
+  background-color: #005826;
+}
