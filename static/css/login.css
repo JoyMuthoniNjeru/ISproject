@@ -20,8 +20,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 160px;
-  background-color: #007A33; /* NTSA Green */
-  border-bottom: 5px solid #FFD100; /* NTSA Yellow */
+  background-color: #007A33; 
+  border-bottom: 5px solid #FFD100; 
   margin-bottom: 30px;
 }
 
@@ -115,4 +115,13 @@ button:hover {
 
 .dashboard-button:hover {
   background-color: #005826;
+}
+
+.booking-form-container {
+  max-width: 600px;
+  background: #ffffff;
+  margin: 0 auto;
+  padding: 30px 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }

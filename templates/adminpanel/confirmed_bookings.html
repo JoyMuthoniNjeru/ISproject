@@ -23,8 +23,8 @@
                 <th>Gender</th>
                 <th>License</th>
                 <th>School</th>
-                <th>Test Center</th>
-                <th>Time</th>
+                <th>Test Centre</th>
+                <th>Test Slot</th>
                 <th>Amount</th>
             </tr>
             {% for b in bookings %}
@@ -34,8 +34,15 @@
                 <td>{{ b.gender }}</td>
                 <td>{{ b.license_type }}</td>
                 <td>{{ b.driving_school }}</td>
-                <td>{{ b.test_slot.test_center.name }}</td>
-                <td>{{ b.test_slot.date }} {{ b.test_slot.time_range }}</td>
+                <td>{{ b.test_slot.test_centre.name }}</td>
+                <td>
+                    {% if b.test_slot %}
+                        {{ b.test_slot.date }}<br>
+                        {{ b.test_slot.time_range }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
                 <td>
                     {% if b.payment %}
                         KES {{ b.payment.amount }}

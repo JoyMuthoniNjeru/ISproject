@@ -6,12 +6,15 @@ from django.forms.widgets import DateInput, TimeInput
 class TestSlotForm(forms.ModelForm):
     class Meta:
         model = TestSlot
-        fields = ['test_centre', 'date', 'start_time', 'end_time', 'max_applicants']
+        fields = ['test_centre', 'date', 'time_range', 'max_applicants']
         widgets = {
-            'date': DateInput(attrs={'type': 'date'}),
-            'start_time': TimeInput(attrs={'type': 'time'}),
-            'end_time': TimeInput(attrs={'type': 'time'}),
-}
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time_range': forms.TextInput(attrs={
+                'placeholder': 'e.g. 08:00 AM – 10:00 AM',
+                'class': 'form-control',
+            }),
+            'max_applicants': forms.NumberInput(attrs={'min': 1}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
