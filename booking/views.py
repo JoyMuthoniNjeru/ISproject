@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import BookingForm
-from .forms import PaymentForm
+from .forms import BookingForm, PaymentForm
 from .models import Booking, Payment
 from adminpanel.models import TestSlot
 from testcentre.models import TestCentre
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.core.serializers import serialize
+import json
+
 
 @login_required
 def make_booking(request):
@@ -22,13 +24,22 @@ def make_booking(request):
     else:
         form = BookingForm()
     
-    test_centres = TestCentre.objects.all()
-    slots_by_centre = TestSlot.objects.all()
+    slots = TestSlot.objects.select_related('test_centre')
+    slot_data = [
+        {
+            'id': slot.id,
+            'test_centre_id': slot.test_centre.id,
+            'date': slot.date.strftime('%Y-%m-%d'),
+            'time_range': slot.time_range
+        }
+        for slot in slots
+    ]
 
     return render(request, 'booking/booking.html', {
         'form': form,
-        'test_centres': test_centres,
-        'slots': slots_by_centre
+        'test_centres': TestCentre.objects.all(),
+        'slots': slots,
+        'slot_data_json': json.dumps(slot_data)
     })
 
 def payment_page(request, booking_id):
@@ -64,3 +75,5 @@ def is_admin(user):
 def confirmed_bookings_view(request):
     bookings = Booking.objects.filter(confirmed=True).select_related('test_slot', 'test_slot__test_centre')
     return render(request, 'adminpanel/confirmed_bookings.html', {'bookings': bookings})
+
+slots_by_centre = TestSlot.objects.all().values('id', 'test_centre_id')

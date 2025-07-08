@@ -51,8 +51,7 @@ class Booking(models.Model):
 class Payment(models.Model):
     PAYMENT_METHODS = [
         ('mpesa', 'M-Pesa'),
-        ('airtel', 'Airtel Money'),
-        ('visa', 'Visa'),
+        ('airtel', 'Airtel Money')
     ]
 
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE)

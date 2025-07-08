@@ -6,91 +6,81 @@
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
-    <div class="logo-section">
-        <img src="{% static 'img/ntsa-logo.png' %}" class="logo-img" alt="Logo">
-    </div>
+<div class="logo-section">
+    <img src="{% static 'img/ntsa-logo.png' %}" class="logo-img" alt="Logo">
+</div>
 
-    <div class="page-wrapper">
-        <div class="booking-form-container">
-            <h1>Driving Test Booking</h1>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="id_full_name">Full Name</label>
-                {{ form.full_name }}
+<div class="page-wrapper">
+    <div class="booking-form-container">
+        <h1>Driving Test Booking</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-                <label for="id_id_number">ID Number</label>
-                {{ form.id_number }}
+            {{ form.non_field_errors }}
 
-                <label for="id_pdl_number">PDL Number (optional)</label>
-                {{ form.pdl_number }}
+            <!-- Render fields manually -->
+            <label>Full Name</label> {{ form.full_name }}
+            <label>ID Number</label> {{ form.id_number }}
+            <label>PDL Number</label> {{ form.pdl_number }}
+            <label>Date of Birth</label> {{ form.date_of_birth }}
+            <label>Gender</label> {{ form.gender }}
+            <label>Nationality</label> {{ form.nationality }}
+            <label>Country of Residence</label> {{ form.country_of_residence }}
+            <label>Mobile Number</label> {{ form.mobile_number }}
+            <label>Email</label> {{ form.email }}
+            <label>Driving School</label> {{ form.driving_school }}
+            <label>License Type</label> {{ form.license_type }}
+            <label>Upload ID/Passport</label> {{ form.document_upload }}
 
-                <label for="id_date_of_birth">Date of Birth</label>
-                {{ form.date_of_birth }}
+            <!-- Test Centre Dropdown -->
+            <label for="id_test_centre">Test Centre</label>
+            {{ form.test_centre }}
 
-                <label for="id_gender">Gender</label>
-                {{ form.gender }}
+            <!-- Test Slot Dropdown (filtered via JS) -->
+            <label for="id_test_slot">Test Slot</label>
+            {{ form.test_slot }}
 
-                <label for="id_nationality">Nationality</label>
-                {{ form.nationality }}
+            <button type="submit">Next</button>
+        </form>
 
-                <label for="id_country_of_residence">Country of Residence</label>
-                {{ form.country_of_residence }}
-
-                <label for="id_mobile_number">Mobile Number</label>
-                {{ form.mobile_number }}
-
-                <label for="id_email">Email Address</label>
-                {{ form.email }}
-
-                <label for="id_driving_school">Driving School</label>
-                {{ form.driving_school }}
-
-                <label for="id_license_type">License Type</label>
-                {{ form.license_type }}
-
-                <label for="id_document_upload">Upload ID/Passport</label>
-                {{ form.document_upload }}
-
-                <label for="id_test_centre">Test Centre</label>
-                {{ form.test_centre }}
-
-                <label for="id_test_slot">Test Slot</label>
-                <select id="id_test_slot" name="test_slot" required>
-                    <option value="">-- Select Test Slot --</option>
-                    {% for slot in slots %}
-                        <option value="{{ slot.id }}" data-centre="{{ slot.test_centre.id }}">
-                            {{ slot.date }} – {{ slot.time_range }}
-                        </option>
+        {% if form.errors %}
+        <div class="error-message">
+            <strong>Please correct the following:</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
                     {% endfor %}
-                </select>
-
-                <button type="submit">Next</button>
-
-            </form>
-
-            <script>
-                const centreSelect = document.getElementById('id_test_centre');
-                const slotSelect = document.getElementById('id_test_slot');
-
-                function filterSlotsByCentre() {
-                    const selectedCentreId = centreSelect.value;
-
-                    for (const option of slotSelect.options) {
-                        const centreId = option.getAttribute('data-centre');
-                        if (!centreId || selectedCentreId === "") {
-                            option.style.display = 'none';
-                        } else {
-                            option.style.display = (centreId === selectedCentreId) ? 'block' : 'none';
-                        }
-                    }
-
-                    slotSelect.value = "";
-                }
-
-                centreSelect.addEventListener('change', filterSlotsByCentre);
-                window.addEventListener('load', filterSlotsByCentre);
-            </script>
+                {% endfor %}
+            </ul>
         </div>
+        {% endif %}
     </div>
+</div>
+
+{{ slot_data_json|json_script:"slot-data" }}
+
+<script>
+    const slotData = JSON.parse(document.getElementById('slot-data').textContent);
+    const testCentreSelect = document.getElementById('id_test_centre');
+    const testSlotSelect = document.getElementById('id_test_slot');
+
+    function filterSlots() {
+        const selectedCentreId = testCentreSelect.value;
+
+        for (const option of testSlotSelect.options) {
+            if (option.value === "") continue;
+            const slot = slotData.find(s => s.id == option.value);
+            option.style.display = (slot && slot.test_centre_id == selectedCentreId) ? 'block' : 'none';
+        }
+
+        testSlotSelect.value = "";
+    }
+
+    testCentreSelect.addEventListener('change', filterSlots);
+    window.addEventListener('load', filterSlots);
+</script>
 </body>
 </html>
+
+
