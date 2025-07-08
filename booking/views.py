@@ -16,30 +16,26 @@ def make_booking(request):
 
     if request.method == 'POST':
         form = BookingForm(request.POST, request.FILES)
+
+        selected_centre_id = request.POST.get('test_centre')
+        if selected_centre_id:
+            form.fields['test_slot'].queryset = TestSlot.objects.filter(test_centre_id=selected_centre_id)
+            
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
             booking.save()
-            return redirect(f'/booking/payment/{booking.id}/')  
+            return redirect(f'/booking/payment/{booking.id}/')
     else:
         form = BookingForm()
-    
-    slots = TestSlot.objects.select_related('test_centre')
-    slot_data = [
-        {
-            'id': slot.id,
-            'test_centre_id': slot.test_centre.id,
-            'date': slot.date.strftime('%Y-%m-%d'),
-            'time_range': slot.time_range
-        }
-        for slot in slots
-    ]
+
+    test_centres = TestCentre.objects.all()
+    slots_by_centre = TestSlot.objects.all()
 
     return render(request, 'booking/booking.html', {
         'form': form,
-        'test_centres': TestCentre.objects.all(),
-        'slots': slots,
-        'slot_data_json': json.dumps(slot_data)
+        'test_centres': test_centres,
+        'slots': slots_by_centre,
     })
 
 def payment_page(request, booking_id):
