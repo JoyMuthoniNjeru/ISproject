@@ -15,9 +15,81 @@
             <h1>Driving Test Booking</h1>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
+                <label for="id_full_name">Full Name</label>
+                {{ form.full_name }}
+
+                <label for="id_id_number">ID Number</label>
+                {{ form.id_number }}
+
+                <label for="id_pdl_number">PDL Number (optional)</label>
+                {{ form.pdl_number }}
+
+                <label for="id_date_of_birth">Date of Birth</label>
+                {{ form.date_of_birth }}
+
+                <label for="id_gender">Gender</label>
+                {{ form.gender }}
+
+                <label for="id_nationality">Nationality</label>
+                {{ form.nationality }}
+
+                <label for="id_country_of_residence">Country of Residence</label>
+                {{ form.country_of_residence }}
+
+                <label for="id_mobile_number">Mobile Number</label>
+                {{ form.mobile_number }}
+
+                <label for="id_email">Email Address</label>
+                {{ form.email }}
+
+                <label for="id_driving_school">Driving School</label>
+                {{ form.driving_school }}
+
+                <label for="id_license_type">License Type</label>
+                {{ form.license_type }}
+
+                <label for="id_document_upload">Upload ID/Passport</label>
+                {{ form.document_upload }}
+
+                <label for="id_test_centre">Test Centre</label>
+                {{ form.test_centre }}
+
+                <label for="id_test_slot">Test Slot</label>
+                <select id="id_test_slot" name="test_slot" required>
+                    <option value="">-- Select Test Slot --</option>
+                    {% for slot in slots %}
+                        <option value="{{ slot.id }}" data-centre="{{ slot.test_centre.id }}">
+                            {{ slot.date }} – {{ slot.time_range }}
+                        </option>
+                    {% endfor %}
+                </select>
+
                 <button type="submit">Next</button>
+
             </form>
+
+            <script>
+                const centreSelect = document.getElementById('id_test_centre');
+                const slotSelect = document.getElementById('id_test_slot');
+
+                function filterSlotsByCentre() {
+                    const selectedCentreId = centreSelect.value;
+
+                    for (const option of slotSelect.options) {
+                        const centreId = option.getAttribute('data-centre');
+                        if (!centreId || selectedCentreId === "") {
+                            option.style.display = 'none';
+                        } else {
+                            option.style.display = (centreId === selectedCentreId) ? 'block' : 'none';
+                        }
+                    }
+
+                    slotSelect.value = "";
+                }
+
+                centreSelect.addEventListener('change', filterSlotsByCentre);
+                window.addEventListener('load', filterSlotsByCentre);
+            </script>
         </div>
     </div>
 </body>

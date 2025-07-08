@@ -1,10 +1,23 @@
 from django import forms
 from .models import Booking
+from adminpanel.models import TestSlot
+from testcentre.models import TestCentre
 from .models import Payment
 import os
 from django.core.exceptions import ValidationError
 
 class BookingForm(forms.ModelForm):
+    test_centre = forms.ModelChoiceField(
+        queryset=TestCentre.objects.all(),
+        label='Select Test Centre',
+        required=True
+    )
+
+    test_slot = forms.ModelChoiceField(
+        queryset=TestSlot.objects.none(),  # empty by default
+        label='Select Test Slot',
+        required=True
+    )
     class Meta:
         model = Booking
         exclude = ['user', 'confirmed']
