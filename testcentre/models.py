@@ -5,6 +5,7 @@ class TestCentre(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
     manager = models.ForeignKey(User, on_delete=models.CASCADE)
+    capacity = models.PositiveIntegerField(default=50)
 
     def __str__(self):
         return self.name
