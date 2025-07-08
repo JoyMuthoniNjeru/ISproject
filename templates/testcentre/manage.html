@@ -4,16 +4,112 @@
 <head>
     <title>Manage Test Centres</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007A33;
+            color: white;
+        }
+
+        .add-btn {
+            margin: 10px 0;
+            padding: 10px 18px;
+            background-color: #007A33;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background-color: #005826;
+        }
+
+    </style>
 </head>
 <body>
     <div class="logo-section">
         <img src="{% static 'img/ntsa-logo.png' %}" alt="NTSA Logo" class="logo-img">
     </div>
 
-    <div class="page-wrapper">
-        <div class="login-container">
-            <h1>Your Test Centres</h1>
+    <div class="booking-form-container">
+        <h1>Your Test Centres</h1>
 
+        <!-- Add Button -->
+        <button id="openModalBtn" class="add-btn">➕ Add Test Centre</button>
+
+        <!-- Centre Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for centre in centres %}
+                <tr>
+                    <td>{{ centre.name }}</td>
+                    <td>{{ centre.location }}</td>
+                    <td>{{ centre.capacity }}</td>
+                    <td>
+                        <a href="{% url 'edit_test_centre' centre.pk %}">Edit</a> |
+                        <a href="{% url 'delete_test_centre' centre.pk %}">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">You haven't added any test centres yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2>Add Test Centre</h2>
             <form method="post">
                 {% csrf_token %}
                 <label for="id_name">Test Centre Name</label>
@@ -25,22 +121,21 @@
                 <label for="id_capacity">Capacity</label>
                 {{ form.capacity }}
 
-                <button type="submit">Add Test Centre</button>
+                <button type="submit" class="add-btn" style="width: 100%; margin-top: 15px;">Submit</button>
             </form>
-
-            <hr>
-            <ul>
-                {% for centre in centres %}
-                    <li>
-                        <strong>{{ centre.name }}</strong> – {{ centre.location }}
-                        <a href="{% url 'edit_test_centre' centre.pk %}">[Edit]</a>
-                        <a href="{% url 'delete_test_centre' centre.pk %}">[Delete]</a>
-                    </li>
-                {% empty %}
-                    <p>You haven't added any test centres yet.</p>
-                {% endfor %}
-            </ul>
         </div>
     </div>
+
+    <!-- Modal Script -->
+    <script>
+        const modal = document.getElementById("formModal");
+        const openBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.getElementById("closeModalBtn");
+
+        openBtn.onclick = () => modal.style.display = "block";
+        closeBtn.onclick = () => modal.style.display = "none";
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+    </script>
 </body>
 </html>
+

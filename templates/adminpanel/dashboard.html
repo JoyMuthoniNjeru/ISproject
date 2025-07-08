@@ -2,40 +2,164 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <a href="{% url 'confirmed_bookings' %}" class="dashboard-button">← View Confirmed Bookings</a>
     <title>Admin Slot Configuration</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <style>
+        .dashboard-button {
+            display: inline-block;
+            margin: 20px;
+            background: #007A33;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .table-container {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007A33;
+            color: white;
+        }
+
+        .add-slot-btn {
+            background-color: #007A33;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .add-slot-btn:hover {
+            background-color: #005826;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border: 3px solid #007A33;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .close {
+            float: right;
+            font-size: 25px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="logo-section">
-        <img src="{% static 'img/ntsa-logo.png' %}" alt="NTSA Logo" class="logo-img">
+        <img src="{% static 'img/ntsa-logo.png' %}" class="logo-img" alt="Logo">
     </div>
 
-    <div class="page-wrapper">
-        <div class="login-container">
-            <h1>Configure Test Slots</h1>
+    <div class="booking-form-container">
+        <a href="{% url 'confirmed_bookings' %}" class="dashboard-button">← View Confirmed Bookings</a>
 
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Add Slot</button>
-            </form>
+        <h1>Test Slot Configuration</h1>
 
-            <hr>
-            <h2>All Configured Slots</h2>
-            <ul>
-                {% for slot in slots %}
-                    <li>
-                        {{ slot.test_centre.name }} – {{ slot.date }} ({{ slot.time_range }}) – Max: {{ slot.max_applicants }}
-                        <a href="{% url 'edit_slot' slot.pk %}">[Edit]</a>
-                        <a href="{% url 'delete_slot' slot.pk %}">[Delete]</a>
-                    </li>
+        <button class="add-slot-btn" onclick="openModal()">➕ Add Slot</button>
 
-                {% empty %}
-                    <p>No slots configured yet.</p>
-                {% endfor %}
-            </ul>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test Centre</th>
+                        <th>Date</th>
+                        <th>Time Range</th>
+                        <th>Max Applicants</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for slot in slots %}
+                        <tr>
+                            <td>{{ slot.test_centre.name }}</td>
+                            <td>{{ slot.date }}</td>
+                            <td>{{ slot.time_range }}</td>
+                            <td>{{ slot.max_applicants }}</td>
+                            <td>
+                                <a href="{% url 'edit_slot' slot.pk %}">[Edit]</a>
+                                <a href="{% url 'delete_slot' slot.pk %}">[Delete]</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5">No slots configured yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal for adding slot -->
+        <div id="slotModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Add New Slot</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="add-slot-btn">Save Slot</button>
+                </form>
+            </div>
         </div>
     </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("slotModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("slotModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("slotModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
+
