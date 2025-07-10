@@ -92,6 +92,22 @@
             font-size: 14px;
             margin-left: 10px;
         }
+        a {
+        color: #007A33;
+        text-decoration: none;
+        font-weight: bold;
+    }
+        a:hover {
+        text-decoration: underline;
+
+    }
+
+        input[type="date"] {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
     </style>
 </head>
 <body>
@@ -114,10 +130,15 @@
             </option>
         {% endfor %}
     </select>
+    <!-- Date Picker -->
+    <label for="date">Date:</label>
+    <input type="date" name="date" id="datePicker" value="{{ selected_date }}">
+
+    <button type="submit" style="padding: 6px 14px; border-radius: 6px; background-color: #007A33; color: white; border: none;">Filter</button>
 </form>
 
         <button class="add-slot-btn" onclick="openModal()">➕ Add Slot</button>
-
+        
         <div class="table-container">
             <table>
                 <thead>
@@ -169,7 +190,7 @@
         document.getElementById("centreSelect").addEventListener("change", function() {
             document.getElementById("centreFilterForm").submit();
         });
-        
+
         function openModal() {
             document.getElementById("slotModal").style.display = "block";
         }

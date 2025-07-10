@@ -58,10 +58,16 @@ def slot_config_view(request):
     from testcentre.models import TestCentre
 
     selected_centre_id = request.GET.get('centre')
+    selected_date = request.GET.get('date')
+
     if selected_centre_id:
         slots = TestSlot.objects.filter(test_centre_id=selected_centre_id).select_related('test_centre')
     else:
         slots = TestSlot.objects.all().select_related('test_centre')
+
+    if selected_date:
+        slots = slots.filter(date=selected_date)
+
 
     if request.method == 'POST':
         form = TestSlotForm(request.POST)
@@ -78,4 +84,5 @@ def slot_config_view(request):
         'form': form,
         'centres': centres,
         'selected_centre_id': selected_centre_id,
+        'selected_date': selected_date,
     })
