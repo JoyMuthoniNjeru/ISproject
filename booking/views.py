@@ -13,29 +13,34 @@ import json
 def make_booking(request):
     if request.user.userprofile.user_type != 'applicant':
         return redirect('/login/')
+    
+
+    form = BookingForm()
+
 
     if request.method == 'POST':
         form = BookingForm(request.POST, request.FILES)
 
+        
         selected_centre_id = request.POST.get('test_centre')
-        if selected_centre_id:
-            form.fields['test_slot'].queryset = TestSlot.objects.filter(test_centre_id=selected_centre_id)
+        selected_date = request.POST.get('slot_date_filter') 
+
+        if selected_centre_id and selected_date:
+            form.fields['test_slot'].queryset = TestSlot.objects.filter(test_centre_id=selected_centre_id, date=selected_date)
             
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
             booking.save()
             return redirect(f'/booking/payment/{booking.id}/')
-    else:
-        form = BookingForm()
 
     test_centres = TestCentre.objects.all()
-    slots_by_centre = TestSlot.objects.all()
+    slots = TestSlot.objects.all()
 
     return render(request, 'booking/booking.html', {
         'form': form,
         'test_centres': test_centres,
-        'slots': slots_by_centre,
+        'slots': slots,
     })
 
 def payment_page(request, booking_id):

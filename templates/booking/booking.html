@@ -13,6 +13,7 @@
     <div class="page-wrapper">
         <div class="booking-form-container">
             <h1>Driving Test Booking</h1>
+
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
@@ -56,13 +57,16 @@
                 <label for="id_test_centre">Test Centre</label>
                 {{ form.test_centre }}
 
+                <label for="slot_date_filter">Select Test Date</label>
+                <input type="date" id="slot_date_filter" name="slot_date_filter">
+
                 <label for="id_test_slot">Test Slot</label>
                 <select name="test_slot" id="id_test_slot" required>
                     <option value="">-- Select Slot --</option>
                     {% for slot in slots %}
-                        <option value="{{ slot.id }}" data-centre="{{ slot.test_centre.id }}">
-                            {{ slot.date }} – {{ slot.time_range }}
-                        </option>
+                        <option value="{{ slot.id }}" data-centre="{{ slot.test_centre.id }}" data-date="{{ slot.date|date:'Y-m-d' }}">
+                                 {{ slot.test_centre.name }} - {{ slot.date }} – {{ slot.time_range }}
+                         </option>
                     {% endfor %}
                 </select>
 
@@ -84,26 +88,39 @@
         </div>
     </div>
 
-    <script>
-        const centreSelect = document.getElementById('id_test_centre');
-        const slotSelect = document.getElementById('id_test_slot');
+<script>
+    const centreSelect = document.getElementById('id_test_centre');
+    const dateInput = document.getElementById('slot_date_filter');
+    const slotSelect = document.getElementById('id_test_slot');
 
-        function filterSlotsByCentre() {
-            const selectedCentreId = centreSelect.value;
-            for (const option of slotSelect.options) {
-                const centreId = option.getAttribute('data-centre');
-                if (!centreId || selectedCentreId === "") {
-                    option.style.display = 'none';
-                } else {
-                    option.style.display = (centreId === selectedCentreId) ? 'block' : 'none';
-                }
+    function filterSlots() {
+        const selectedCentre = centreSelect.value;
+        const selectedDate = dateInput.value;
+
+        for (const option of slotSelect.options) {
+            const centreId = option.getAttribute('data-centre');
+            const slotDate = option.getAttribute('data-date');
+
+            if (!centreId || !slotDate) {
+                option.style.display = 'block'; // Show default option
+                continue;
             }
-            slotSelect.value = "";
+
+            if (selectedCentre && selectedDate && centreId === selectedCentre && slotDate === selectedDate) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+            
         }
 
-        centreSelect.addEventListener('change', filterSlotsByCentre);
-        window.addEventListener('load', filterSlotsByCentre);
-    </script>
+        slotSelect.value = "";
+    }
+
+    centreSelect.addEventListener('change', filterSlots);
+    dateInput.addEventListener('change', filterSlots);
+    window.addEventListener('load', filterSlots);
+</script>
 </body>
 </html>
 
