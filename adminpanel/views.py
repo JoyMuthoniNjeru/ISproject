@@ -55,7 +55,13 @@ def confirmed_bookings_view(request):
 
 @user_passes_test(is_admin)
 def slot_config_view(request):
-    slots = TestSlot.objects.all().select_related('test_centre')
+    from testcentre.models import TestCentre
+
+    selected_centre_id = request.GET.get('centre')
+    if selected_centre_id:
+        slots = TestSlot.objects.filter(test_centre_id=selected_centre_id).select_related('test_centre')
+    else:
+        slots = TestSlot.objects.all().select_related('test_centre')
 
     if request.method == 'POST':
         form = TestSlotForm(request.POST)
@@ -65,7 +71,11 @@ def slot_config_view(request):
     else:
         form = TestSlotForm()
 
+    centres = TestCentre.objects.all()
+
     return render(request, 'adminpanel/dashboard.html', {
         'slots': slots,
         'form': form,
+        'centres': centres,
+        'selected_centre_id': selected_centre_id,
     })

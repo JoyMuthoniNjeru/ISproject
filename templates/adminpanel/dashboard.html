@@ -84,6 +84,14 @@
         .close:hover {
             color: red;
         }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +103,18 @@
         <a href="{% url 'confirmed_bookings' %}" class="dashboard-button">← View Confirmed Bookings</a>
 
         <h1>Test Slot Configuration</h1>
+
+            <form method="get" style="margin: 20px 0;">
+                <label for="centre">Filter by Test Centre:</label>
+                <select name="centre" id="centre" onchange="this.form.submit()">
+                    <option value="">-- All Centres --</option>
+                    {% for centre in centres %}
+                        <option value="{{ centre.id }}" {% if centre.id|stringformat:"s" == selected_centre %}selected{% endif %}>
+                            {{ centre.name }}
+                        </option>
+                    {% endfor %}
+                 </select>
+            </form>
 
         <button class="add-slot-btn" onclick="openModal()">➕ Add Slot</button>
 
