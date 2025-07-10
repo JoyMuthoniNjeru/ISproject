@@ -111,6 +111,16 @@
             <span class="close" id="closeModalBtn">&times;</span>
             <h2>Add Test Centre</h2>
             <form method="post">
+                {% if form.errors %}
+                    <div style="color: red; margin-bottom: 10px;">
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p>{{ field.label }}: {{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 {% csrf_token %}
                 <label for="id_name">Test Centre Name</label>
                 {{ form.name }}
@@ -135,6 +145,16 @@
         openBtn.onclick = () => modal.style.display = "block";
         closeBtn.onclick = () => modal.style.display = "none";
         window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+         // 🚨 If form has errors, show the modal on page load
+        const showModalOnLoad = "{{ form.errors|yesno:'true,false' }}" === "true";
+
+        window.onload = function () {
+            if (showModalOnLoad) {
+                const modal = document.getElementById("formModal");
+                modal.style.display = "block";
+            }
+        };
     </script>
 </body>
 </html>
